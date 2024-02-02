@@ -4,30 +4,34 @@
 
 namespace extlib::win
 {
-    const handle_t& ptapi::open_process( std::uint64_t desired_access, bool inherit, std::uint64_t id )
+    std::unique_ptr< handle_t > ptapi::open_process( std::uint64_t desired_access, bool inherit, std::uint64_t id )
     {
         HANDLE hProcess = OpenProcess( desired_access, inherit, id );
 
         if ( !hProcess )
             throw win_exception::from_last_error( "OpenProcess" );
 
-        return hProcess;
+        return std::make_unique< handle_t >( hProcess );
     }
 
-    bool ptapi::try_open_process( handle_t* handle, std::uint64_t desired_access, bool inherit, std::uint64_t id )
+    bool ptapi::try_open_process(
+        std::unique_ptr< handle_t >& handle,
+        std::uint64_t desired_access,
+        bool inherit,
+        std::uint64_t id )
     {
         HANDLE hProcess = OpenProcess( desired_access, inherit, id );
 
         if ( !hProcess )
             return false;
 
-        *handle = hProcess;
+        handle = std::make_unique< handle_t >( hProcess );
         return true;
     }
 
-    void ptapi::close_handle( const handle_t& handle )
+    void ptapi::close_handle( std::unique_ptr< handle_t > handle )
     {
-        if ( !CloseHandle( handle.handle ) )
+        if ( !CloseHandle( handle->handle ) )
             throw win_exception::from_last_error( "CloseHandle" );
     }
 }  // namespace extlib::win

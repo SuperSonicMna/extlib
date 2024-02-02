@@ -27,7 +27,7 @@ namespace extlib::win
         return ids;
     }
 
-    std::vector< module_t > psapi::enum_process_modules( const handle_t& handle, module_filter_flag filter )
+    std::vector< module_t > psapi::enum_process_modules( std::unique_ptr< handle_t >& handle, module_filter_flag filter )
     {
         const auto modules = try_enum_process_modules( handle, filter );
 
@@ -37,7 +37,7 @@ namespace extlib::win
         return modules;
     }
 
-    std::vector< module_t > psapi::try_enum_process_modules( const handle_t& handle, module_filter_flag filter )
+    std::vector< module_t > psapi::try_enum_process_modules( std::unique_ptr< handle_t >& handle, module_filter_flag filter )
     {
         HMODULE hModules[ MAX_MODULE_COUNT ];
         DWORD cbNeeded;
@@ -45,23 +45,23 @@ namespace extlib::win
         std::vector< module_t > modules;
 
         if ( !EnumProcessModulesEx(
-                 handle.handle, hModules, sizeof( hModules ), &cbNeeded, static_cast< DWORD >( filter ) ) )
+                 handle->handle, hModules, sizeof( hModules ), &cbNeeded, static_cast< DWORD >( filter ) ) )
             return modules;
 
         std::size_t count = static_cast< std::size_t >( cbNeeded / sizeof( HMODULE ) );
 
         // Add all of our modules into the vector. We don't want our own though.
         for ( std::size_t i = 0; i < count; ++i )
-            modules.emplace_back( handle.handle, hModules[ i ] );
+            modules.emplace_back( handle->handle, hModules[ i ] );
 
         return modules;
     }
 
-    std::string psapi::get_module_base_name( const handle_t& handle, const module_t& module )
+    std::string psapi::get_module_base_name( std::unique_ptr< handle_t >& handle, const module_t& module )
     {
         TCHAR szProcessName[ MAX_PATH ] = TEXT( "<unknown>" );
 
-        if ( !GetModuleBaseName( handle.handle, module.module, szProcessName, sizeof( szProcessName ) / sizeof( TCHAR ) ) )
+        if ( !GetModuleBaseName( handle->handle, module.module, szProcessName, sizeof( szProcessName ) / sizeof( TCHAR ) ) )
             throw win_exception::from_last_error( "GetModuleBaseName" );
 
         return szProcessName;
@@ -71,7 +71,7 @@ namespace extlib::win
     {
         TCHAR szProcessName[ MAX_PATH ];
 
-        if (!GetModuleFileNameEx(handle.handle, module.module, szProcessName, MAX_PATH))
+        if ( !GetModuleFileNameEx( handle.handle, module.module, szProcessName, MAX_PATH ) )
         {
             if ( GetLastError() == ERROR_ACCESS_DENIED )
                 return {};

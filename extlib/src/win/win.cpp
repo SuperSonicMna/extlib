@@ -176,7 +176,7 @@ namespace extlib::win
             const auto state = static_cast< region_state_t >( info->State );
             const auto type = static_cast< region_type_t >( info->Type );
 
-            //std::cout << info->RegionSize / sinfo.dwregionSize << '\n';
+            // std::cout << info->RegionSize / sinfo.dwregionSize << '\n';
             regions.push_back( { base_address, end, info->RegionSize, info->Protect, state, type } );
 
             start_address = end;
@@ -197,7 +197,7 @@ namespace extlib::win
 
     std::string module_t::get_name() const
     {
-        return win::psapi::get_module_base_name( handle, *this );
+        return win::psapi::get_module_base_name( std::make_unique< handle_t >( handle ), *this );
     }
 
 }  // namespace extlib::win

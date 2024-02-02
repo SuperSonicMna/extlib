@@ -1,40 +1,10 @@
 #include <cstdint>
+#include <memory>
+#include <vector>
 
 namespace extlib::win
 {
-    enum class region_state_t : std::uint64_t;
-    enum class region_type_t : std::uint64_t;
-
-    /// <summary>
-    /// Represents a region of memory within a remote process.
-    /// </summary>
-    struct region_t
-    {
-        /// <summary>
-        /// The start and end addresses of the region.
-        /// </summary>
-        std::uintptr_t start, end;
-
-        /// <summary>
-        /// The size of the current region.
-        /// </summary>
-        std::size_t size;
-
-        /// <summary>
-        /// The access protection of the regions in the region.
-        /// </summary>
-        std::uint64_t protect;
-
-        /// <summary>
-        /// The state of the current region.
-        /// </summary>
-        region_state_t state;
-
-        /// <summary>
-        /// The type of region we currently have.
-        /// </summary>
-        region_type_t type;
-    };
+    struct handle_t;
 
     /// <summary>
     /// The state of a region.
@@ -80,4 +50,45 @@ namespace extlib::win
         private_t = 0x20000
     };
 
-}  // namespace extlib
+    /// <summary>
+    /// Represents a region of memory within a remote process.
+    /// </summary>
+    struct region_t
+    {
+        /// <summary>
+        /// The start and end addresses of the region.
+        /// </summary>
+        std::uintptr_t start, end;
+
+        /// <summary>
+        /// The size of the current region.
+        /// </summary>
+        std::size_t size;
+
+        /// <summary>
+        /// The access protection of the regions in the region.
+        /// </summary>
+        std::uint64_t protect;
+
+        /// <summary>
+        /// The state of the current region.
+        /// </summary>
+        region_state_t state;
+
+        /// <summary>
+        /// The type of region we currently have.
+        /// </summary>
+        region_type_t type;
+
+        /// <summary>
+        /// Gets all regions within an address range.
+        /// </summary>
+        /// <param name="handle">The handle of the target process.</param>
+        /// <param name="start">The start address.</param>
+        /// <param name="end">The end address.</param>
+        /// <returns>A list of regions.</returns>
+        static std::vector< region_t >
+        get_all_regions( std::unique_ptr< handle_t > handle, std::uintptr_t start, std::uintptr_t end );
+    };
+
+}  // namespace extlib::win

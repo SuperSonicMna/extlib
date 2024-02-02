@@ -20,7 +20,14 @@ namespace extlib
         /// </summary>
         /// <param name="name">The name of the target process.</param>
         /// <returns>A list of processes matching `name`.</returns>
-        static std::vector< std::shared_ptr< process > > get_all_by_name( const std::string_view name );
+        static std::vector< std::unique_ptr< process > > get_all_by_name( const std::string_view name );
+
+        /// <summary>
+        /// Gets a process identifier using a process's name.
+        /// </summary>
+        /// <param name="name">The name of the process.</param>
+        /// <returns>The identifer.</returns>
+        static std::vector< std::uint64_t > get_ids_from_name( const std::string_view name );
 
         /// <summary>
         /// Specifies wheter or not the current process is a 64-bit process.
@@ -67,7 +74,7 @@ namespace extlib
         /// <summary>
         /// The handle instance to the process.
         /// </summary>
-        win::handle_t handle;
+        std::unique_ptr< win::handle_t >& handle;
 
        private:
         /// <summary>
@@ -76,8 +83,8 @@ namespace extlib
         /// <param name="handle">The handle to the process.</param>
         /// <param name="main_module">The main module.</param>
         /// <param name="name">The name of the process.</param>
-        process( win::handle_t handle, win::module_t main_module, const char* const name )
-            : handle( handle ),
+        process( std::unique_ptr< win::handle_t > handle, win::module_t main_module, const char* const name )
+            : handle( std::move( handle ) ),
               main_module( main_module ),
               name( name ),
               is_dead( false )
@@ -90,6 +97,6 @@ namespace extlib
         /// <param name="handle">The handle to the target process.</param>
         /// <param name="name">The base name of the module.</param>
         /// <returns>The module.</returns>
-        static win::module_t get_module_by_name( const win::handle_t& handle, const std::string_view name );
+        static win::module_t get_module_by_name( std::unique_ptr< win::handle_t >& handle, const std::string_view name );
     };
 }  // namespace extlib

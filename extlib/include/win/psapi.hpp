@@ -6,8 +6,8 @@
 
 #include <Psapi.h>
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace extlib::win
 {
@@ -32,7 +32,9 @@ namespace extlib::win
         /// <param name="handle">A handle to the process.</param>
         /// <param name="filter">The filter criteria.</param>
         /// <returns>An array that receives the list of modules.</returns>
-        static std::vector< module_t > enum_process_modules( const handle_t& handle, module_filter_flag filter );
+        static std::vector< module_t > enum_process_modules(
+            std::unique_ptr< handle_t >& handle,
+            module_filter_flag filter );
 
         /// <summary>
         /// Attempts to retrieve a handle for each module in the specified process that meets the specified filter criteria.
@@ -40,7 +42,9 @@ namespace extlib::win
         /// <param name="handle">A handle to the process.</param>
         /// <param name="filter">The filter criteria.</param>
         /// <returns>An array that receives the list of modules.</returns>
-        static std::vector< module_t > try_enum_process_modules( const handle_t& handle, module_filter_flag filter );
+        static std::vector< module_t > try_enum_process_modules(
+            std::unique_ptr< handle_t >& handle,
+            module_filter_flag filter );
 
         /// <summary>
         /// Retrieves the base name of the specified module.
@@ -48,14 +52,15 @@ namespace extlib::win
         /// <param name="handle">A handle to the process that contains the module.</param>
         /// <param name="module">A handle to the module.</param>
         /// <returns>The base name of the module.</returns>
-        static std::string get_module_base_name( const handle_t& handle, const module_t& module );
+        static std::string get_module_base_name( std::unique_ptr< handle_t >& handle, const module_t& module );
 
         /// <summary>
         /// Retrieves the fully qualified path for the file containing the specified module.
         /// </summary>
         /// <param name="handle">A handle to the process that contains the module.</param>
-        /// <param name="module">A handle to the module. If this parameter is NULL, GetModuleFileNameEx returns the path of the executable file of the process specified in hProcess.</param>
-        /// <returns>Fully qualified path to the module.</returns>
+        /// <param name="module">A handle to the module. If this parameter is NULL, GetModuleFileNameEx returns the path of
+        /// the executable file of the process specified in hProcess.</param> <returns>Fully qualified path to the
+        /// module.</returns>
         static std::string get_module_file_name( const handle_t& handle, const module_t& module );
 
         /// <summary>
