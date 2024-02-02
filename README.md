@@ -1,2 +1,2 @@
-# extlib
-An external x64 user mode process manipulation library (read/write memory structures, object locator, sig. scanner, etc.).
+# extlib [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+An external x64 user mode process manipulation library that can automate various reverse engineering tasks. It can locate objects by scanning for RTTI signatures, scan process memory for unique patterns, read and write process memory, and much more. The library was created in a simple CMake (v3.8) project and uses C++17. It was tested with the MSVC compiler and is intended for 64-bit Windows applications.
