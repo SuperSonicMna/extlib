@@ -9,7 +9,7 @@
 #include "win/memapi.hpp"
 #include "win/region.hpp"
 
-// forward declerations.
+// forward declarations.
 namespace extlib
 {
     struct pattern_t;
@@ -191,7 +191,7 @@ namespace extlib::win
     };
 
     /// <summary>
-    /// Represets a section within the portable executable.
+    /// Represents a section within the portable executable.
     /// </summary>
     struct section_t
     {
