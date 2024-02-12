@@ -4,7 +4,7 @@
 cmake_minimum_required (VERSION 3.8)
 
 # Set our C++ standard
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -20,7 +20,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Create our executable with main.cpp being out entry point
-add_executable (extlib "main.cpp")
+add_executable (extlib "main.cpp" "src/win/windows.cpp" "src/win/error.cpp" "src/win/kernel32.cpp")
 
 # Add our include directories
-target_include_directories (extlib PRIVATE "include")
+target_include_directories (extlib PRIVATE "include/")
