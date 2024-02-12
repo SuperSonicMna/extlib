@@ -3,6 +3,8 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
+set(CMAKE_CXX_STANDARD 20) # C++ 20 must be installed
+
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
@@ -13,12 +15,3 @@ project ("extlib")
 
 # Include sub-projects.
 add_subdirectory ("extlib")
-
-# Create our executable
-add_executable(example "examples/test.cpp")
-
-# Add our include directories
-target_include_directories(example PRIVATE ${EXTLIB_INCLUDE})
-
-# Link our library with the project
-target_link_libraries(example PRIVATE extlib)
