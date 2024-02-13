@@ -23,17 +23,36 @@ namespace extlib::win
     struct handle_t final
     {
         /// <summary>
-        /// Creates a new handle instance.
+        /// A custom deleter object for handle pointers.
         /// </summary>
-        /// <param name="hHandle">Windows handle.</param>
-        handle_t( HANDLE hHandle );
+        struct deleter
+        {
+            /// <summary>
+            /// The actual deleter method (deletes pointer & closes handle).
+            /// </summary>
+            /// <param name="handle"></param>
+            void operator()( handle_t *handle ) const;
+        };
+
+        /// <summary>
+        /// Creates a new safe handle from a raw Windows handle.
+        /// </summary>
+        /// <param name="hHandle">The raw Windows handle.</param>
+        /// <returns>Handle pointer.</returns>
+        static std::shared_ptr< handle_t > get( HANDLE hHandle );
 
         /// <summary>
         /// Get the raw Windows handle.
         /// </summary>
-        constexpr HANDLE get() const;
+        constexpr HANDLE raw() const;
 
        protected:
+        /// <summary>
+        /// Creates a new handle instance.
+        /// </summary>
+        /// <param name="hHandle">Windows handle.</param>
+        explicit handle_t( HANDLE hHandle );
+
         HANDLE hHandle;
     };
 }  // namespace extlib::win

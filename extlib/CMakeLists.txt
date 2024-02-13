@@ -20,7 +20,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Create our executable with main.cpp being out entry point
-add_executable (extlib "main.cpp" "src/win/windows.cpp" "src/win/error.cpp" "src/win/kernel32.cpp")
+add_executable (extlib "main.cpp" "src/win/windows.cpp" "src/win/error.cpp" "src/win/kernel32.cpp" "src/process.cpp")
 
 # Add our include directories
 target_include_directories (extlib PRIVATE "include/")

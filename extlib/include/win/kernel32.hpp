@@ -1,6 +1,10 @@
 #pragma once
 
+// clang-format off
 #include "win/windows.hpp"
+// clang-format on
+
+#include <TlHelp32.h>
 
 namespace extlib::win
 {
@@ -23,5 +27,14 @@ namespace extlib::win
     /// Closes an open object handle.
     /// </summary>
     /// <param name="handle">A valid handle to an open object.</param>
-    result< void > close_handle( std::shared_ptr< handle_t > handle );
+    result< void > close_handle( handle_t* handle );
+
+    /// <summary>
+    /// Takes a snapshot of the specified processes, as well as the heaps, modules, and threads used by these processes.
+    /// </summary>
+    /// <param name="flags">The portions of the system to be included in the snapshot.</param>
+    /// <param name="id">The process identifier of the process to be included in the snapshot.</param>
+    /// <returns>If the function succeeds, it returns an open handle to the specified snapshot.</returns>
+    result< std::shared_ptr< handle_t > > create_toolhelp32_snapshot( std::uint32_t flags, std::uint32_t id );
+
 }  // namespace extlib::win
