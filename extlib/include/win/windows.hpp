@@ -49,6 +49,7 @@ namespace extlib::win
             return hHandle;
         }
 
+       protected:
         /// <summary>
         /// Creates a new handle instance.
         /// </summary>

@@ -8,11 +8,11 @@ std::int32_t main()
 {
     try
     {
-        auto snapshot = win::snapshot< win::snapshot_kind::thread_t >::get();
+        auto snapshot = win::snapshot< win::snapshot_kind::process_t >::get();
 
         for ( const auto& entry : snapshot )
         {
-            std::cout << "pID: " << entry.th32OwnerProcessID << " tID: " << entry.th32ThreadID << '\n';
+            std::cout << entry.szExeFile << std::endl;
         }
     }
     catch (const std::runtime_error& e)
