@@ -67,7 +67,6 @@ namespace extlib::win
         /// <param name="handle">The handle of the snapshot.</param>
         snapshot( std::shared_ptr< handle_t > handle ) : handle( handle )
         {
-            //printf( "thing worked ig\n" );
         }
 
         /// <summary>
@@ -129,6 +128,63 @@ namespace extlib::win
         /// </summary>
         /// <returns>Pointer to the process entry.</returns>
         PROCESSENTRY32* operator->();
+
+        /// <summary>
+        /// Implements the `++` operator for the iterator.
+        /// </summary>
+        /// <returns>The new iterator with the next entry.</returns>
+        iterator& operator++();
+
+        /// <summary>
+        /// Compares the current iterator with another.
+        /// </summary>
+        /// <param name="other">The other iterator.</param>
+        /// <returns>True if the same.</returns>
+        bool operator==( const iterator& other ) const;
+
+        /// <summary>
+        /// Compares the current iterator with another (not equals).
+        /// </summary>
+        /// <param name="other">The other iterator.</param>
+        /// <returns>True if different.</returns>
+        bool operator!=( const iterator& other ) const;
+    };
+
+    /// <summary>
+    /// Specialization of the snapshot class for threads.
+    /// </summary>
+    template<>
+    class snapshot< snapshot_kind::thread_t >::iterator
+    {
+        std::shared_ptr< handle_t > handle;
+        THREADENTRY32 entry{};
+        bool done;
+
+        /// <summary>
+        /// Updates the entry or throws an exception.
+        /// </summary>
+        /// <param name="result">The result of the system call.</param>
+        void update_or_throw( result_t< THREADENTRY32 > result );
+
+       public:
+        /// <summary>
+        /// Creates a new iterator for the snapshot class.
+        /// </summary>
+        /// <param name="handle">The handle to the snapshot.</param>
+        /// <param name="first">If this is the first call.</param>
+        explicit iterator( std::shared_ptr< handle_t > handle, bool end );
+
+        /// <summary>
+        /// Implements the `*` operator for the iterator.
+        /// </summary>
+        /// <returns>Reference to the process entry.</returns>
+        THREADENTRY32& operator*();
+
+        /// <summary>
+        /// Implements the `->` operator for the iterator.
+        /// </summary>
+        /// <returns>Pointer to the process entry.</returns>
+        THREADENTRY32* operator->();
 
         /// <summary>
         /// Implements the `++` operator for the iterator.

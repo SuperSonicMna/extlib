@@ -40,15 +40,34 @@ namespace extlib::win
     /// <summary>
     /// Retrieves information about the first process encountered in a system snapshot.
     /// </summary>
-    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.</param>
-    /// <returns>Process information such as the name of the executable file, the process identifier, and the process identifier of the parent process.</returns>
+    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot
+    /// function.</param>
+    /// <returns>Process information such as the name of the executable file, the process identifier, and
+    /// the process identifier of the parent process.</returns>
     result_t< PROCESSENTRY32 > process32_first( std::shared_ptr< handle_t > handle );
 
     /// <summary>
     /// Retrieves information about the next process recorded in a system snapshot.
     /// </summary>
-    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.</param>
-    /// <returns>Process information such as the name of the executable file, the process identifier, and the process identifier of the parent process.</returns>
+    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot
+    /// function.</param> <returns>Process information such as the name of the executable file, the process identifier, and
+    /// the process identifier of the parent process.</returns>
     result_t< PROCESSENTRY32 > process32_next( std::shared_ptr< handle_t > handle );
 
-}  // namespace extlib::
+    /// <summary>
+    /// Retrieves information about the first thread encountered in a system snapshot.
+    /// </summary>
+    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot
+    /// function.</param>
+    /// <returns>A thread entry.</returns>
+    result_t< THREADENTRY32 > thread32_first( std::shared_ptr< handle_t > handle );
+
+    /// <summary>
+    /// Retrieves information about the next thread recorded in a system snapshot.
+    /// </summary>
+    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot
+    /// function.</param>
+    /// <returns>A thread entry.</returns>
+    result_t< THREADENTRY32 > thread32_next( std::shared_ptr< handle_t > handle );
+
+}  // namespace extlib::win

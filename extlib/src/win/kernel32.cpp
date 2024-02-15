@@ -68,4 +68,28 @@ namespace extlib::win
 
         return std::unexpected( error_t::get_last() );
     }
+
+    result_t< THREADENTRY32 > thread32_first( std::shared_ptr< handle_t > handle )
+    {
+        THREADENTRY32 Entry{};
+
+        Entry.dwSize = sizeof( THREADENTRY32 );
+
+        if ( Thread32First( handle->raw(), &Entry ) )
+            return Entry;
+
+        return std::unexpected( error_t::get_last() );
+    }
+
+    result_t< THREADENTRY32 > thread32_next( std::shared_ptr< handle_t > handle )
+    {
+        THREADENTRY32 Entry{};
+
+        Entry.dwSize = sizeof( THREADENTRY32 );
+
+        if ( Thread32Next( handle->raw(), &Entry ) )
+            return Entry;
+
+        return std::unexpected( error_t::get_last() );
+    }
 }  // namespace extlib::win
