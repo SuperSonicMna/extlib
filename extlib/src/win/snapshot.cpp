@@ -16,7 +16,8 @@ namespace extlib::win
     }
 
     extlib::win::snapshot< snapshot_kind::process_t >::iterator::iterator( std::shared_ptr< handle_t > handle, bool end )
-        : done( end )
+        : done( end ),
+          handle( handle )
     {
         if ( !end )
         {

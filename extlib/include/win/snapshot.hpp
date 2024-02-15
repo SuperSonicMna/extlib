@@ -59,7 +59,7 @@ namespace extlib::win
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns>The snapshot</returns>
-        static result_t< snapshot< T > > get( std::uint32_t id = 0 );
+        static snapshot< T > get( std::uint32_t id = 0 );
 
         /// <summary>
         /// Creates a new snapshot from a snapshot handle.
@@ -67,6 +67,7 @@ namespace extlib::win
         /// <param name="handle">The handle of the snapshot.</param>
         snapshot( std::shared_ptr< handle_t > handle ) : handle( handle )
         {
+            //printf( "thing worked ig\n" );
         }
 
         /// <summary>
@@ -83,9 +84,14 @@ namespace extlib::win
     };
 
     template< snapshot_kind T >
-    inline result_t< snapshot< T > > snapshot< T >::get( std::uint32_t id )
+    inline snapshot< T > snapshot< T >::get( std::uint32_t id )
     {
-        return create_toolhelp32_snapshot( static_cast< std::uint32_t >( T ), id );
+        const auto result = create_toolhelp32_snapshot( static_cast< std::uint32_t >( T ), id );
+
+        if ( result.has_value() )
+            return result.value();
+
+        throw std::runtime_error( std::format( "Failed to create snapshot: {}", result.error().what() ) );
     }
 
     /// <summary>
@@ -110,7 +116,7 @@ namespace extlib::win
         /// </summary>
         /// <param name="handle">The handle to the snapshot.</param>
         /// <param name="first">If this is the first call.</param>
-        explicit iterator( std::shared_ptr< handle_t > handle, bool first );
+        explicit iterator( std::shared_ptr< handle_t > handle, bool end );
 
         /// <summary>
         /// Implements the `*` operator for the iterator.

@@ -6,13 +6,19 @@ using namespace extlib;
 
 std::int32_t main()
 {
-    auto snapshot = win::snapshot< win::snapshot_kind::process_t >::get();
-    
-    for (const auto& entry : snapshot.value())
+    try
     {
-        std::cout << entry.th32ProcessID << '\n';
+        auto snapshot = win::snapshot< win::snapshot_kind::process_t >::get();
+
+        for ( const auto& entry : snapshot )
+        {
+            std::cout << entry.th32ProcessID << '\n';
+        }
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 
-    std::cout << "Hello, world!" << std::endl;
     return 0;
 }

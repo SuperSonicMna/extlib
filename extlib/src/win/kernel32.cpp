@@ -33,7 +33,7 @@ namespace extlib::win
     result_t< std::shared_ptr< handle_t > > open_process( std::uint32_t access, bool inherit, std::uint32_t id )
     {
         if ( HANDLE hProcess = OpenProcess( access, inherit, id ); hProcess != INVALID_HANDLE_VALUE )
-            return std::make_shared< handle_t >( hProcess );
+            return handle_t::get( hProcess );
 
         return std::unexpected( error_t::get_last() );
     }
@@ -47,7 +47,7 @@ namespace extlib::win
     result_t< std::shared_ptr< handle_t > > create_toolhelp32_snapshot( std::uint32_t flags, std::uint32_t id )
     {
         if ( HANDLE hSnapshot = CreateToolhelp32Snapshot( flags, id ); hSnapshot != INVALID_HANDLE_VALUE )
-            return std::make_shared< handle_t >( hSnapshot );
+            return handle_t::get( hSnapshot );
 
         return std::unexpected( error_t::get_last() );
     }
