@@ -15,7 +15,7 @@ namespace extlib::win
     /// </summary>
     /// <typeparam name="T">The expected value's type.</typeparam>
     template< typename T >
-    using result = std::expected< T, error_t >;
+    using result_t = std::expected< T, error_t >;
 
     /// <summary>
     /// A safe self-deallocating handle.
@@ -39,19 +39,21 @@ namespace extlib::win
         /// </summary>
         /// <param name="hHandle">The raw Windows handle.</param>
         /// <returns>Handle pointer.</returns>
-        static std::shared_ptr< handle_t > get( HANDLE hHandle );
+        static std::shared_ptr< handle_t > get( HANDLE handle );
 
         /// <summary>
         /// Get the raw Windows handle.
         /// </summary>
-        constexpr HANDLE raw() const;
+        constexpr HANDLE raw() const
+        {
+            return hHandle;
+        }
 
-       protected:
         /// <summary>
         /// Creates a new handle instance.
         /// </summary>
         /// <param name="hHandle">Windows handle.</param>
-        explicit handle_t( HANDLE hHandle );
+        handle_t( HANDLE hHandle );
 
         HANDLE hHandle;
     };

@@ -11,7 +11,7 @@ namespace extlib
     /// </summary>
     class process final
     {
-        std::shared_ptr< win::handle_t > handle;
+        //std::shared_ptr< win::handle_t > handle;
         std::string_view name;
 
        public:
@@ -20,7 +20,7 @@ namespace extlib
         /// </summary>
         /// <param name="name">The file name of the target process.</param>
         /// <returns>List of processes.</returns>
-        static std::vector< std::unique_ptr< process > > get_all( std::string_view name );
+        //static std::vector< std::unique_ptr< process > > get_all( std::string_view name );
 
         /// <summary>
         /// Creates a new process from a unique identifier.

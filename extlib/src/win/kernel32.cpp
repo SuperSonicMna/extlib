@@ -7,7 +7,7 @@ namespace extlib::win
     constexpr auto MAX_MODULE_COUNT = 512;
     constexpr auto MAX_PROCESSES_COUNT = 1024;
 
-    result< std::vector< std::uint32_t > > enum_processes()
+    result_t< std::vector< std::uint32_t > > enum_processes()
     {
         DWORD aProcesses[ MAX_PROCESSES_COUNT ], cbNeeded;
 
@@ -30,7 +30,7 @@ namespace extlib::win
         return ids;
     }
 
-    result< std::shared_ptr< handle_t > > open_process( std::uint32_t access, bool inherit, std::uint32_t id )
+    result_t< std::shared_ptr< handle_t > > open_process( std::uint32_t access, bool inherit, std::uint32_t id )
     {
         if ( HANDLE hProcess = OpenProcess( access, inherit, id ); hProcess != INVALID_HANDLE_VALUE )
             return std::make_shared< handle_t >( hProcess );
@@ -38,16 +38,33 @@ namespace extlib::win
         return std::unexpected( error_t::get_last() );
     }
 
-    result< void > close_handle( handle_t* handle )
+    result_t< void > close_handle( handle_t* handle )
     {
         if ( !CloseHandle( handle->raw() ) )
             return std::unexpected( error_t::get_last() );
     }
 
-    result< std::shared_ptr< handle_t > > create_toolhelp32_snapshot( std::uint32_t flags, std::uint32_t id )
+    result_t< std::shared_ptr< handle_t > > create_toolhelp32_snapshot( std::uint32_t flags, std::uint32_t id )
     {
         if ( HANDLE hSnapshot = CreateToolhelp32Snapshot( flags, id ); hSnapshot != INVALID_HANDLE_VALUE )
             return std::make_shared< handle_t >( hSnapshot );
+
+        return std::unexpected( error_t::get_last() );
+    }
+    result_t< PROCESSENTRY32 > process32_first( std::shared_ptr< handle_t > handle )
+    {
+        PROCESSENTRY32 Entry;
+        if ( Process32First( handle->raw(), &Entry ) )
+            return Entry;
+
+        return std::unexpected( error_t::get_last() );
+    }
+
+    result_t< PROCESSENTRY32 > process32_next( std::shared_ptr< handle_t > handle )
+    {
+        PROCESSENTRY32 Entry;
+        if ( Process32Next( handle->raw(), &Entry ) )
+            return Entry;
 
         return std::unexpected( error_t::get_last() );
     }
