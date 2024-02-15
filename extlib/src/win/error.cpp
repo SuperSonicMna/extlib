@@ -35,4 +35,8 @@ namespace extlib::win
 
         return message;
     }
+
+    error::error( const error_t& e ) : std::runtime_error( e.what().data() )
+    {
+    }
 }  // namespace extlib::win

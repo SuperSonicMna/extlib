@@ -9,12 +9,6 @@
 namespace extlib::win
 {
     /// <summary>
-    /// Retrieves the process identifier for each process object in the system.
-    /// </summary>
-    /// <returns>A pointer to an array that receives the list of process identifiers.</returns>
-    result_t< std::vector< std::uint32_t > > enum_processes() noexcept;
-
-    /// <summary>
     /// Opens an existing local process object.
     /// </summary>
     /// <param name="desired_access">The access to the process object.</param>
@@ -69,5 +63,7 @@ namespace extlib::win
     /// function.</param>
     /// <returns>A thread entry.</returns>
     result_t< THREADENTRY32 > thread32_next( std::shared_ptr< handle_t > handle ) noexcept;
+
+    //result_t<MODULEENTRY32
 
 }  // namespace extlib::win

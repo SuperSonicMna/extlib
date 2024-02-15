@@ -7,7 +7,7 @@ namespace extlib::win
         if ( !result.has_value() )
         {
             if ( result.error().code != ERROR_NO_MORE_FILES )
-                throw std::runtime_error( std::format( "Failed to get next process entry: {}", result.error().what() ) );
+                throw error( "Failed to get next process entry: {}", result.error().what() );
 
             done = true;
         }
@@ -75,7 +75,7 @@ namespace extlib::win
         if ( !result.has_value() )
         {
             if ( result.error().code != ERROR_NO_MORE_FILES )
-                throw std::runtime_error( std::format( "Failed to get next thread entry: {}", result.error().what() ) );
+                throw error( "Failed to get next thread entry: {}", result.error().what() );
 
             done = true;
         }

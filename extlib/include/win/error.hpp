@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <iostream>
 #include <string>
 
 namespace extlib::win
@@ -27,4 +28,30 @@ namespace extlib::win
         /// </summary>
         std::uintptr_t code;
     };
+
+    /// <summary>
+    /// Represents a runtime error thrown by the library.
+    /// </summary>
+    class error : std::runtime_error
+    {
+       public:
+        /// <summary>
+        /// Creates a new throwable error.
+        /// </summary>
+        /// <param name="e">The windows error.</param>
+        explicit error( const error_t& e );
+
+        /// <summary>
+        /// Creates anew error from a formattable constructor.
+        /// </summary>
+        /// <typeparam name="...T">The types for the variadic.</typeparam>
+        /// <param name="format">The format string.</param>
+        /// <param name="...args">The list of arguments.</param>
+        template< class... T >
+        explicit error( const std::format_string< T... > format, T&&... args )
+            : std::runtime_error( std::vformat( format.get(), std::make_format_args( args... ) ) )
+        {
+        }
+    };
+
 }  // namespace extlib::win

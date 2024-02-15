@@ -4,7 +4,7 @@
 
 namespace extlib::win
 {
-    result_t< std::shared_ptr< handle_t > > open_process( std::uint32_t access, bool inherit, std::uint32_t id )
+    result_t< std::shared_ptr< handle_t > > open_process( std::uint32_t access, bool inherit, std::uint32_t id ) noexcept
     {
         if ( HANDLE hProcess = OpenProcess( access, inherit, id ); hProcess != INVALID_HANDLE_VALUE )
             return handle_t::get( hProcess );
@@ -12,20 +12,20 @@ namespace extlib::win
         return std::unexpected( error_t::get_last() );
     }
 
-    result_t< void > close_handle( handle_t* handle )
+    result_t< void > close_handle( handle_t* handle ) noexcept
     {
         if ( !CloseHandle( handle->raw() ) )
             return std::unexpected( error_t::get_last() );
     }
 
-    result_t< std::shared_ptr< handle_t > > create_toolhelp32_snapshot( std::uint32_t flags, std::uint32_t id )
+    result_t< std::shared_ptr< handle_t > > create_toolhelp32_snapshot( std::uint32_t flags, std::uint32_t id ) noexcept
     {
         if ( HANDLE hSnapshot = CreateToolhelp32Snapshot( flags, id ); hSnapshot != INVALID_HANDLE_VALUE )
             return handle_t::get( hSnapshot );
 
         return std::unexpected( error_t::get_last() );
     }
-    result_t< PROCESSENTRY32 > process32_first( std::shared_ptr< handle_t > handle )
+    result_t< PROCESSENTRY32 > process32_first( std::shared_ptr< handle_t > handle ) noexcept
     {
         PROCESSENTRY32 Entry;
         if ( Process32First( handle->raw(), &Entry ) )
@@ -34,7 +34,7 @@ namespace extlib::win
         return std::unexpected( error_t::get_last() );
     }
 
-    result_t< PROCESSENTRY32 > process32_next( std::shared_ptr< handle_t > handle )
+    result_t< PROCESSENTRY32 > process32_next( std::shared_ptr< handle_t > handle ) noexcept
     {
         PROCESSENTRY32 Entry;
         if ( Process32Next( handle->raw(), &Entry ) )
@@ -43,7 +43,7 @@ namespace extlib::win
         return std::unexpected( error_t::get_last() );
     }
 
-    result_t< THREADENTRY32 > thread32_first( std::shared_ptr< handle_t > handle )
+    result_t< THREADENTRY32 > thread32_first( std::shared_ptr< handle_t > handle ) noexcept
     {
         THREADENTRY32 Entry{};
 
@@ -55,7 +55,7 @@ namespace extlib::win
         return std::unexpected( error_t::get_last() );
     }
 
-    result_t< THREADENTRY32 > thread32_next( std::shared_ptr< handle_t > handle )
+    result_t< THREADENTRY32 > thread32_next( std::shared_ptr< handle_t > handle ) noexcept
     {
         THREADENTRY32 Entry{};
 
