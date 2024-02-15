@@ -16,28 +16,28 @@ namespace extlib::win
         /// <summary>
         /// Includes all heaps of the process specified in th32ProcessID in the snapshot.
         /// </summary>
-        heaplist_t,
+        heaplist_t = TH32CS_SNAPHEAPLIST,
 
         /// <summary>
         /// Includes all modules of the process specified in th32ProcessID in the snapshot.
         /// </summary>
-        module_t,
+        module_t = TH32CS_SNAPMODULE,
 
         /// <summary>
         /// Includes all 32-bit modules of the process specified in th32ProcessID in the snapshot when called from a 64-bit
         /// process.
         /// </summary>
-        module32_t,
+        module32_t = TH32CS_SNAPMODULE32,
 
         /// <summary>
         /// Includes all processes in the system in the snapshot.
         /// </summary>
-        process_t,
+        process_t = TH32CS_SNAPPROCESS,
 
         /// <summary>
         /// Includes all threads in the system in the snapshot.
         /// </summary>
-        thread_t
+        thread_t = TH32CS_SNAPTHREAD
     };
 
     /// <summary>
@@ -73,13 +73,13 @@ namespace extlib::win
         /// Returns the iterator for the beginning of the snapshot.
         /// </summary>
         /// <returns>Iterator.</returns>
-        iterator begin(){};
+        iterator begin();
 
         /// <summary>
         /// Returns the end of the iterator.
         /// </summary>
         /// <returns>Iterator.</returns>
-        iterator end(){};
+        iterator end();
     };
 
     template< snapshot_kind T >
@@ -95,15 +95,54 @@ namespace extlib::win
     class snapshot< snapshot_kind::process_t >::iterator
     {
         std::shared_ptr< handle_t > handle;
-        PROCESSENTRY32 entry;
+        PROCESSENTRY32 entry{};
+        bool done;
+
+        /// <summary>
+        /// Updates the entry or throws an exception.
+        /// </summary>
+        /// <param name="result">The result of the system call.</param>
+        void update_or_throw( result_t< PROCESSENTRY32 > result );
 
        public:
         /// <summary>
-        /// Creates a new iterator for the snapshot calss.
+        /// Creates a new iterator for the snapshot class.
         /// </summary>
         /// <param name="handle">The handle to the snapshot.</param>
         /// <param name="first">If this is the first call.</param>
         explicit iterator( std::shared_ptr< handle_t > handle, bool first );
+
+        /// <summary>
+        /// Implements the `*` operator for the iterator.
+        /// </summary>
+        /// <returns>Reference to the process entry.</returns>
+        PROCESSENTRY32& operator*();
+
+        /// <summary>
+        /// Implements the `->` operator for the iterator.
+        /// </summary>
+        /// <returns>Pointer to the process entry.</returns>
+        PROCESSENTRY32* operator->();
+
+        /// <summary>
+        /// Implements the `++` operator for the iterator.
+        /// </summary>
+        /// <returns>The new iterator with the next entry.</returns>
+        iterator& operator++();
+
+        /// <summary>
+        /// Compares the current iterator with another.
+        /// </summary>
+        /// <param name="other">The other iterator.</param>
+        /// <returns>True if the same.</returns>
+        bool operator==( const iterator& other ) const;
+
+        /// <summary>
+        /// Compares the current iterator with another (not equals).
+        /// </summary>
+        /// <param name="other">The other iterator.</param>
+        /// <returns>True if different.</returns>
+        bool operator!=( const iterator& other ) const;
     };
 
 }  // namespace extlib::win
