@@ -137,4 +137,72 @@ namespace extlib::win
     {
         return iterator( handle, true );
     }
+
+    void snapshot< snapshot_kind::module_t >::iterator::update_or_throw( result_t< MODULEENTRY32 > result )
+    {
+        if ( !result.has_value() )
+        {
+            if ( result.error().code != ERROR_NO_MORE_FILES )
+                throw error( "Failed to get next thread entry: {}", result.error().what() );
+
+            done = true;
+        }
+        else
+            entry = result.value();
+    }
+
+    snapshot< snapshot_kind::module_t >::iterator::iterator( std::shared_ptr< handle_t > handle, bool end )
+        : done( end ),
+          handle( handle )
+    {
+        entry.dwSize = sizeof( MODULEENTRY32 );
+
+        if ( !end )
+        {
+            const auto result = module32_first( handle );
+
+            update_or_throw( result );
+        }
+    }
+
+    MODULEENTRY32& snapshot< snapshot_kind::module_t >::iterator::operator*()
+    {
+        return entry;
+    }
+
+    MODULEENTRY32* snapshot< snapshot_kind::module_t >::iterator::operator->()
+    {
+        return &entry;
+    }
+
+    snapshot< snapshot_kind::module_t >::iterator& snapshot< snapshot_kind::module_t >::iterator::operator++()
+    {
+        const auto result = module32_next( handle );
+
+        update_or_throw( result );
+
+        return *this;
+    }
+
+    bool snapshot< snapshot_kind::module_t >::iterator::operator==( const iterator& other ) const
+    {
+        return done == other.done;
+    }
+
+    bool snapshot< snapshot_kind::module_t >::iterator::operator!=( const iterator& other ) const
+    {
+        return !( *this == other );
+    }
+
+    template<>
+    snapshot< snapshot_kind::module_t >::iterator snapshot< snapshot_kind::module_t >::begin()
+    {
+        return iterator( handle, false );
+    }
+
+    template<>
+    snapshot< snapshot_kind::module_t >::iterator snapshot< snapshot_kind::module_t >::end()
+    {
+        return iterator( handle, true );
+    }
 }  // namespace extlib::win

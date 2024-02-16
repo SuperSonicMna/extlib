@@ -32,7 +32,7 @@ namespace extlib::win
     /// <summary>
     /// Represents a runtime error thrown by the library.
     /// </summary>
-    class error : std::runtime_error
+    class error : public std::runtime_error
     {
        public:
         /// <summary>
@@ -52,6 +52,8 @@ namespace extlib::win
             : std::runtime_error( std::vformat( format.get(), std::make_format_args( args... ) ) )
         {
         }
+
+        
     };
 
 }  // namespace extlib::win

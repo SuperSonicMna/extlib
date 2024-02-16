@@ -66,4 +66,28 @@ namespace extlib::win
 
         return std::unexpected( error_t::get_last() );
     }
+
+    result_t< MODULEENTRY32 > module32_first( std::shared_ptr< handle_t > handle ) noexcept
+    {
+        MODULEENTRY32 Entry{};
+
+        Entry.dwSize = sizeof( MODULEENTRY32 );
+
+        if ( Module32First( handle->raw(), &Entry ) )
+            return Entry;
+
+        return std::unexpected( error_t::get_last() );
+    }
+
+    result_t< MODULEENTRY32 > module32_next( std::shared_ptr< handle_t > handle ) noexcept
+    {
+        MODULEENTRY32 Entry{};
+
+        Entry.dwSize = sizeof( MODULEENTRY32 );
+
+        if ( Module32Next( handle->raw(), &Entry ) )
+            return Entry;
+
+        return std::unexpected( error_t::get_last() );
+    }
 }  // namespace extlib::win

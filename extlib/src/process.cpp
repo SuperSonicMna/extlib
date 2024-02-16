@@ -27,5 +27,9 @@ namespace extlib
 
     process::process( const PROCESSENTRY32& entry ) : name( entry.szExeFile ), id( entry.th32ProcessID )
     {
+        for ( const auto& entry : win::snapshot< win::snapshot_kind::module_t >::get( id ) )
+        {
+            std::cout << entry.szModule << '\n';
+        }
     }
 }  // namespace extlib

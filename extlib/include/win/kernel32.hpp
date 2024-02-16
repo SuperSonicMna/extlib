@@ -64,6 +64,18 @@ namespace extlib::win
     /// <returns>A thread entry.</returns>
     result_t< THREADENTRY32 > thread32_next( std::shared_ptr< handle_t > handle ) noexcept;
 
-    //result_t<MODULEENTRY32
+    /// <summary>
+    /// Retrieves information about the first module associated with a process.
+    /// </summary>
+    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.</param>
+    /// <returns>A pointer to a MODULEENTRY32 structure.</returns>
+    result_t< MODULEENTRY32 > module32_first( std::shared_ptr< handle_t > handle ) noexcept;
+
+    /// <summary>
+    /// Retrieves information about the next module associated with a process or thread.
+    /// </summary>
+    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.</param>
+    /// <returns>A pointer to a MODULEENTRY32 structure.</returns>
+    result_t< MODULEENTRY32 > module32_next( std::shared_ptr< handle_t > handle ) noexcept;
 
 }  // namespace extlib::win
