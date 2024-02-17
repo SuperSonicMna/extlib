@@ -1,6 +1,10 @@
 #pragma once
 
+// clang-format off
 #include <Windows.h>
+// clang-format on
+
+#include <TlHelp32.h>
 
 #include <expected>
 #include <iostream>
@@ -31,7 +35,7 @@ namespace extlib::win
             /// The actual deleter method (deletes pointer & closes handle).
             /// </summary>
             /// <param name="handle"></param>
-            void operator()( handle_t *handle ) const;
+            void operator()( handle_t* handle ) const;
         };
 
         /// <summary>
@@ -54,8 +58,45 @@ namespace extlib::win
         /// Creates a new handle instance.
         /// </summary>
         /// <param name="hHandle">Windows handle.</param>
-        handle_t( HANDLE hHandle );
+        explicit handle_t( HANDLE hHandle );
 
         HANDLE hHandle;
+    };
+
+    /// <summary>
+    /// A module owned by a process.
+    /// </summary>
+    struct module_t final
+    {
+        /// <summary>
+        /// Gets the raw module instance.
+        /// </summary>
+        /// <returns></returns>
+        constexpr HMODULE raw() const
+        {
+            return hModule;
+        }
+
+        /// <summary>
+        /// Gets the size of the module.
+        /// </summary>
+        /// <returns>Size of the module in bytes.</returns>
+        constexpr std::size_t size() const
+        {
+            return start - end;
+        }
+
+       protected:
+        /// <summary>
+        /// Creates a new module instance.
+        /// </summary>
+        /// <param name="handle">The handle to the owning process.</param>
+        /// <param name="entry">The module entry.</param>
+        explicit module_t( std::shared_ptr< handle_t > handle, const MODULEENTRY32& entry );
+
+        HMODULE hModule;
+        std::shared_ptr< handle_t > handle;
+        std::uintptr_t start, end;
+        std::string_view name;
     };
 }  // namespace extlib::win

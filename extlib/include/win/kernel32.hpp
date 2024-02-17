@@ -4,8 +4,6 @@
 #include "win/windows.hpp"
 // clang-format on
 
-#include <TlHelp32.h>
-
 namespace extlib::win
 {
     /// <summary>
