@@ -19,7 +19,7 @@ namespace extlib::win
     /// Closes an open object handle.
     /// </summary>
     /// <param name="handle">A valid handle to an open object.</param>
-    result_t< void > close_handle( handle_t* handle ) noexcept; 
+    result_t< void > close_handle( handle_t* handle ) noexcept;
 
     /// <summary>
     /// Takes a snapshot of the specified processes, as well as the heaps, modules, and threads used by these processes.
@@ -65,15 +65,25 @@ namespace extlib::win
     /// <summary>
     /// Retrieves information about the first module associated with a process.
     /// </summary>
-    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.</param>
-    /// <returns>A pointer to a MODULEENTRY32 structure.</returns>
+    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot
+    /// function.</param> <returns>A pointer to a MODULEENTRY32 structure.</returns>
     result_t< MODULEENTRY32 > module32_first( std::shared_ptr< handle_t > handle ) noexcept;
 
     /// <summary>
     /// Retrieves information about the next module associated with a process or thread.
     /// </summary>
-    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot function.</param>
-    /// <returns>A pointer to a MODULEENTRY32 structure.</returns>
+    /// <param name="handle">A handle to the snapshot returned from a previous call to the CreateToolhelp32Snapshot
+    /// function.</param> <returns>A pointer to a MODULEENTRY32 structure.</returns>
     result_t< MODULEENTRY32 > module32_next( std::shared_ptr< handle_t > handle ) noexcept;
+
+    /// <summary>
+    /// Reads an array of bytes in a process's memory.
+    /// </summary>
+    /// <param name="handle">The handle of the process.</param>
+    /// <param name="address">The address to read from.</param>
+    /// <param name="length">The number of bytes to read.</param>
+    /// <returns>The bytes.</returns>
+    result_t< std::shared_ptr< uint8_t[] > >
+    read_process_memory( std::shared_ptr< handle_t > handle, std::uintptr_t address, std::size_t length ) noexcept;
 
 }  // namespace extlib::win

@@ -4,6 +4,17 @@
 
 namespace extlib
 {
+    std::unique_ptr< win::module_t > process::get_module( std::string_view name )
+    {
+        for ( const auto& entry : win::snapshot< win::snapshot_kind::module_t >::get( id ) )
+        {
+            if ( entry.szModule == name )
+                return std::make_unique< win::module_t >( handle, entry );
+        }
+
+        throw win::error( "Failed to locate module by name: {}", name );
+    }
+
     std::vector< std::unique_ptr< process > > process::get_all( std::string_view name )
     {
         std::vector< std::unique_ptr< process > > processes;
@@ -25,11 +36,10 @@ namespace extlib
         return nullptr;
     }
 
-    process::process( const PROCESSENTRY32& entry ) : name( entry.szExeFile ), id( entry.th32ProcessID )
+    process::process( const PROCESSENTRY32& entry )
+        : name( entry.szExeFile ),
+          id( entry.th32ProcessID ),
+          main_module( get_module( entry.szExeFile ) )
     {
-        for ( const auto& entry : win::snapshot< win::snapshot_kind::module_t >::get( id ) )
-        {
-            std::cout << entry.szModule << '\n';
-        }
     }
 }  // namespace extlib

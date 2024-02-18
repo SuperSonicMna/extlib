@@ -63,6 +63,8 @@ namespace extlib::win
         HANDLE hHandle;
     };
 
+    struct section_t;
+
     /// <summary>
     /// A module owned by a process.
     /// </summary>
@@ -83,10 +85,15 @@ namespace extlib::win
         /// <returns>Size of the module in bytes.</returns>
         constexpr std::size_t size() const
         {
-            return start - end;
+            return end - start;
         }
 
-       protected:
+        /// <summary>
+        /// Returns a string representation of the module.
+        /// </summary>
+        /// <returns>Module as string.</returns>
+        std::string to_string() const;
+
         /// <summary>
         /// Creates a new module instance.
         /// </summary>
@@ -94,6 +101,7 @@ namespace extlib::win
         /// <param name="entry">The module entry.</param>
         explicit module_t( std::shared_ptr< handle_t > handle, const MODULEENTRY32& entry );
 
+       protected:
         HMODULE hModule;
         std::shared_ptr< handle_t > handle;
         std::uintptr_t start, end;

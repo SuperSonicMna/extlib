@@ -23,11 +23,17 @@ namespace extlib::win
         delete handle;
     }
 
+    std::string module_t::to_string() const
+    {
+        return std::format( "{} - {} bytes", name, size() );
+    }
+
     module_t::module_t( std::shared_ptr< handle_t > handle, const MODULEENTRY32& entry )
         : hModule( entry.hModule ),
           start( reinterpret_cast< std::uintptr_t >( entry.modBaseAddr ) ),
           end( start + entry.modBaseSize ),
-          handle( handle )
+          handle( handle ),
+          name( entry.szModule )
     {
     }
 }  // namespace extlib::win
