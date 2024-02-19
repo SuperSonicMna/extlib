@@ -16,8 +16,9 @@ namespace extlib
         /// <summary>
         /// Creates a new process from a system process entry.
         /// </summary>
+        /// <param name="handle">The handle to the current process.</param>
         /// <param name="entry">The process entry.</param>
-        explicit process( const PROCESSENTRY32& entry );
+        explicit process( std::shared_ptr< win::handle_t > handle, const PROCESSENTRY32& entry );
 
        public:
         std::string_view name;

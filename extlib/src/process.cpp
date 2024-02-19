@@ -22,7 +22,15 @@ namespace extlib
         for ( const auto& entry : win::snapshot< win::snapshot_kind::process_t >::get() )
         {
             if ( entry.szExeFile == name )
-                processes.emplace_back( new process{ entry } );
+            {
+                const auto result =
+                    win::open_process( PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, entry.th32ProcessID );
+
+                if ( !result.has_value() )
+                    throw win::error( "OpenProcess failed: {}", result.error().what() );
+
+                processes.emplace_back( new process{ result.value(), entry } );
+            }
         }
 
         return processes;
@@ -36,9 +44,10 @@ namespace extlib
         return nullptr;
     }
 
-    process::process( const PROCESSENTRY32& entry )
+    process::process( std::shared_ptr< win::handle_t > handle, const PROCESSENTRY32& entry )
         : name( entry.szExeFile ),
           id( entry.th32ProcessID ),
+          handle( handle ),
           main_module( get_module( entry.szExeFile ) )
     {
     }

@@ -43,14 +43,47 @@ namespace extlib::win
           start( reinterpret_cast< std::uintptr_t >( entry.modBaseAddr ) ),
           end( start + entry.modBaseSize ),
           handle( handle ),
-          name( entry.szModule ),
-          sections( get_sections() )
+          name( entry.szModule )
+    {
+        dos_header = read< IMAGE_DOS_HEADER >( start );
+
+        // We store the number of bytes actually read when reading the NT headers so that we know where to start reading
+        // section information, aswell as differentiate between a 64-bit and 32-bit module.
+        std::size_t nt_header_size;
+        nt_headers = read< IMAGE_NT_HEADERS >( start + dos_header.e_lfanew, &nt_header_size );
+
+        kind = static_cast< pe_kind >( nt_headers.OptionalHeader.Magic );
+
+        std::uintptr_t offset = start + dos_header.e_lfanew + nt_header_size;
+        for ( std::size_t i = 0; i < nt_headers.FileHeader.NumberOfSections; ++i )
+        {
+            std::size_t section_header_size;
+            const auto section = read< IMAGE_SECTION_HEADER >( offset, &section_header_size );
+
+            offset += section_header_size;
+        }
+    }
+
+    std::vector< section_t > module_t::get_sections() const
+    {
+        return sections;
+    }
+
+    section_t::section_t( module_t* parent, const IMAGE_SECTION_HEADER& section_header )
+        : start( parent->start + section_header.VirtualAddress ),
+          end( start + section_header.Misc.VirtualSize ),
+          name( reinterpret_cast< const char* >( section_header.Name ), 8 ),
+          parent_module( *parent )
     {
     }
 
-    std::vector< section_t > module_t::get_sections()
+    constexpr std::size_t section_t::size() const
     {
-        const auto dos_header = read< IMAGE_DOS_HEADER >( start );
-        const auto nt_headers = read< IMAGE_NT_HEADERS >( start + dos_header.e_lfanew ); 
+        return end - start;
+    }
+
+    std::string section_t::to_string() const
+    {
+        return std::format( "'{}' - {} bytes", name, size() );
     }
 }  // namespace extlib::win

@@ -74,12 +74,12 @@ namespace extlib::win
         /// <summary>
         /// Indicates a 32-bit executable.
         /// </summary>
-        pe32_t = 0x010B,
+        pe32_t = IMAGE_NT_OPTIONAL_HDR32_MAGIC,
 
         /// <summary>
         /// Indicates a 64-bit executable.
         /// </summary>
-        pe64_t = 0x020B
+        pe64_t = IMAGE_NT_OPTIONAL_HDR64_MAGIC
     };
 
     /// <summary>
@@ -117,12 +117,13 @@ namespace extlib::win
         /// </summary>
         /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="address">The starting address to read from.</param>
+        /// <param name="bytes_read">The number of bytes the syscall read.</param>
         /// <returns>The value.</returns>
         template< typename T >
-        T read( std::uintptr_t address ) const;
+        T read( std::uintptr_t address, std::size_t* bytes_read = nullptr ) const;
 
         /// <summary>
-        /// Gets all of the sections in the current module (re-reads PE header).
+        /// Gets all of the sections in the current module.
         /// </summary>
         /// <returns>List of sections.</returns>
         std::vector< section_t > get_sections() const;
@@ -132,18 +133,65 @@ namespace extlib::win
         /// </summary>
         pe_kind kind;
 
+        /// <summary>
+        /// The start/end locations of the current module.
+        /// </summary>
+        std::uintptr_t start, end;
+
+        /// <summary>
+        /// The name of the current module.
+        /// </summary>
+        std::string_view name;
+
        protected:
         HMODULE hModule;
         std::shared_ptr< handle_t > handle;
-        std::uintptr_t start, end;
-        std::string_view name;
+
+        IMAGE_DOS_HEADER dos_header;
+        IMAGE_NT_HEADERS nt_headers;
 
         std::vector< section_t > sections;
     };
 
-    template< typename T >
-    inline T module_t::read( std::uintptr_t address ) const
+    /// <summary>
+    /// A section containing information about a module.
+    /// </summary>
+    struct section_t final
     {
-        return read_process_memory< T >( handle, address );
+        /// <summary>
+        /// Creates a new section with the provded parameters.
+        /// </summary>
+        /// <param name="parent">The module this section resides in.</param>
+        /// <param name="section_header">The section's header.</param>
+        explicit section_t( module_t* parent, const IMAGE_SECTION_HEADER& section_header );
+
+        /// <summary>
+        /// Returns the size of the section in bytes.
+        /// </summary>
+        /// <returns>Size of section.</returns>
+        constexpr std::size_t size() const;
+
+        /// <summary>
+        /// Returns a string representation of the current section.
+        /// </summary>
+        /// <returns>String representation.</returns>
+        std::string to_string() const;
+
+        std::uintptr_t start, end;
+        std::string_view name;
+
+       protected:
+        module_t parent_module;
+    };
+
+    template< typename T >
+    inline T module_t::read( std::uintptr_t address, std::size_t* bytes_read ) const
+    {
+        const auto result = read_process_memory< T >( handle, address, bytes_read );
+
+        if ( result.has_value() )
+            return result.value();
+
+        throw error( "ReadProcessMemory failed: {}", result.error().what() );
     }
 }  // namespace extlib::win

@@ -92,13 +92,15 @@ namespace extlib::win
     /// <typeparam name="T">The type to read.</typeparam>
     /// <param name="handle">A handle to the process.</param>
     /// <param name="address">The address to read from.</param>
+    /// <param name="bytes_read">The number of bytes the syscall read.</param>
     /// <returns>The value.</returns>
     template< typename T >
-    result_t< T > read_process_memory( std::shared_ptr< handle_t > handle, std::uintptr_t address ) noexcept
+    result_t< T >
+    read_process_memory( std::shared_ptr< handle_t > handle, std::uintptr_t address, std::size_t* bytes_read ) noexcept
     {
         T value{};
 
-        if ( !ReadProcessMemory( handle->raw(), reinterpret_cast< LPCVOID >( address ), &value, sizeof( T ), nullptr ) )
+        if ( !ReadProcessMemory( handle->raw(), reinterpret_cast< LPCVOID >( address ), &value, sizeof( T ), bytes_read ) )
             return std::unexpected( error_t::get_last() );
 
         return value;
