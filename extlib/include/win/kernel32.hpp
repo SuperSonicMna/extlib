@@ -86,4 +86,22 @@ namespace extlib::win
     result_t< std::shared_ptr< uint8_t[] > >
     read_process_memory( std::shared_ptr< handle_t > handle, std::uintptr_t address, std::size_t length ) noexcept;
 
+    /// <summary>
+    /// Reads a provided type from a process's memory space.
+    /// </summary>
+    /// <typeparam name="T">The type to read.</typeparam>
+    /// <param name="handle">A handle to the process.</param>
+    /// <param name="address">The address to read from.</param>
+    /// <returns>The value.</returns>
+    template< typename T >
+    result_t< T > read_process_memory( std::shared_ptr< handle_t > handle, std::uintptr_t address ) noexcept
+    {
+        T value{};
+
+        if ( !ReadProcessMemory( handle->raw(), reinterpret_cast< LPCVOID >( address ), &value, sizeof( T ), nullptr ) )
+            return std::unexpected( error_t::get_last() );
+
+        return value;
+    }
+
 }  // namespace extlib::win

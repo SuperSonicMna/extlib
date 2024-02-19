@@ -23,6 +23,16 @@ namespace extlib::win
         delete handle;
     }
 
+    constexpr HMODULE module_t::raw() const
+    {
+        return hModule;
+    }
+
+    constexpr std::size_t module_t::size() const
+    {
+        return end - start;
+    }
+
     std::string module_t::to_string() const
     {
         return std::format( "{} - {} bytes", name, size() );
@@ -33,7 +43,14 @@ namespace extlib::win
           start( reinterpret_cast< std::uintptr_t >( entry.modBaseAddr ) ),
           end( start + entry.modBaseSize ),
           handle( handle ),
-          name( entry.szModule )
+          name( entry.szModule ),
+          sections( get_sections() )
     {
+    }
+
+    std::vector< section_t > module_t::get_sections()
+    {
+        const auto dos_header = read< IMAGE_DOS_HEADER >( start );
+        const auto nt_headers = read< IMAGE_NT_HEADERS >( start + dos_header.e_lfanew ); 
     }
 }  // namespace extlib::win

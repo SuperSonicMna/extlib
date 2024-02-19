@@ -90,4 +90,15 @@ namespace extlib::win
 
         return std::unexpected( error_t::get_last() );
     }
+
+    result_t< std::shared_ptr< std::uint8_t[] > >
+    read_process_memory( std::shared_ptr< handle_t > handle, std::uintptr_t address, std::size_t length ) noexcept
+    {
+        const auto bytes = std::shared_ptr< std::uint8_t[] >( new std::uint8_t[ length ] );
+
+        if ( ReadProcessMemory( handle->raw(), reinterpret_cast< LPCVOID >( address ), bytes.get(), length, nullptr ) )
+            return bytes;
+
+        return std::unexpected( error_t::get_last() );
+    }
 }  // namespace extlib::win
